@@ -1,20 +1,21 @@
 import express from 'express';
-import cors from 'cors';
+import { config } from 'dotenv';
+import {  connectToDatabase, disconnectFromDatabase } from './db/connection';
 
+config(); // Load environment variables from .env file
 const app = express();
-app.use(cors());
+const port = process.env.PORT || 5001;
 
 //for reading and parsing JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// GET - to get data
-// POST - to create new data
-// PUT - to update existing data
-// DELETE - to delete data
-
-
-const port = 5001;
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+//connect to the database
+connectToDatabase()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port} & connected to the database`);
 });
+  })
+  .catch((error) => console.error('Failed to connect to the database:', error));
+
