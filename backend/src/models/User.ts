@@ -1,25 +1,25 @@
-import mongoose from "mongoose";
-import { randomUUID } from "crypto";
+import mongoose from 'mongoose';
+import { randomUUID } from 'crypto';
 
 const chatSchema = new mongoose.Schema({
     id: {
         type: String,
-        default: () => randomUUID(),
+        default: randomUUID(),
     },
     role: {
         type: String,
-        required: true
+        required: true,
     },
     content: {
         type: String,
-        required: true
-    }
+        required: true,
+    },
 });
 
 const userSchema = new mongoose.Schema({
-    username: {
+    name: {
         type: String,
-        required: true
+        required: true,
     },
     email: {
         type: String,
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    chats: [chatSchema],
+    chats: [chatSchema], // Array of chat objects
 });
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model('User', userSchema);

@@ -1,15 +1,11 @@
-import { Router } from 'express';
-import userRouter from './userRoute';
-import chatsRouter from './chatsRoute';
+import { Router } from "express";
+import userRouter from "./userRoute";
+import chatRouter from "./chatRoutes";
 
 const appRouter = Router();
 
-
-
-appRouter.get("/user", userRouter);  //domain/api/v1/user
-appRouter.get("/chats", chatsRouter);  //domain/api/v1/chats
-
-
+appRouter.use("/user", userRouter); // Mount userRouter on /domain/api/v1/user path
+appRouter.use("/chats", chatRouter); // Mount chatRouter on /domain/api/v1/chats path
 
 
 export default appRouter;

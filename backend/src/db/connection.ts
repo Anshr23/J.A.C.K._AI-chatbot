@@ -1,23 +1,20 @@
-import { connect , disconnect } from 'mongoose';
+import { connect , disconnect } from "mongoose";
 
-// This function connects to the MongoDB database using Mongoose.
 async function connectToDatabase() {
-  try {
-    await connect(process.env.MONGODB_URI);
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-    throw error;
-  }
+    try {
+        await connect(process.env.MONGODB_URL);
+    } catch (error) {
+        console.error("Error connecting to the database:", error);
+        throw new error("Database connection failed");
+    }
 }
-
+//secure approach to discoonnect from the database if any error occurs
 async function disconnectFromDatabase() {
-  try {
-    await disconnect();
-    console.log('Disconnected from MongoDB');
-  } catch (error) {
-    console.error('Error disconnecting from MongoDB:', error);
-    throw error;
-  }
+    try {
+        await disconnect();
+    } catch (error) {
+        console.error("Error disconnecting from the database:", error);
+        throw new error("Database disconnection failed");
+    }
 }
 export { connectToDatabase, disconnectFromDatabase };
