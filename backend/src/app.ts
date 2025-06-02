@@ -2,6 +2,7 @@ import express from 'express';
 import { config } from 'dotenv';
 import morgan from "morgan"
 import appRouter from './routes/index.js'; // Import the appRouter from routes/index.js
+import cookieParser from 'cookie-parser';
 config(); // Load environment variables from .env file
 const app = express();
 
@@ -9,7 +10,8 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//middlewares
+app.use(cookieParser(process.env.COOKIE_SECRET));
+
 app.use(morgan('dev')); // HTTP request logger middleware
 
 app.use("/api/v1", appRouter); // Use the appRouter for all routes under /api/v1
