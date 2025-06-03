@@ -56,7 +56,7 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
     }
 };
 
-export const userLogin = async(req: Request, res: Response, next: NextFunction) => {
+export const user = async(req: Request, res: Response, next: NextFunction) => {
     try {
         //user login
         const { email, password } = req.body;
