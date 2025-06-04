@@ -2,7 +2,8 @@ import React from "react";
 import { AppBar, Toolbar } from '@mui/material';
 import Logo from "./shared/Logo"
 import { useAuth } from "../context/AuthContext";
-import { NavLink } from "react-router-dom";
+//import { NavLink } from "react-router-dom";
+import NavLink from "./shared/NavLink";
 
 const Header = () => {
     const auth = useAuth();
@@ -13,19 +14,19 @@ const Header = () => {
             <div>
                 {auth?.isLoggedIn ? (
                 <>
-                <NavLink to="/chat" style={{ background: "#00fffc", color: "black", padding: "8px 16px", borderRadius: "4px", textDecoration: "none", marginRight: "8px" }}>
+                <NavLink to="/chat" className="chatLink">
                     Go To Chat
                 </NavLink>
-                <NavLink to="/" onClick={auth.logout} style={{ background: "#51538f", color: "white", padding: "8px 16px", borderRadius: "4px", textDecoration: "none" }}>
-                    logout
+                <NavLink to="/" onClick={auth.signout} className="Sign-outLink">
+                    Sign out
                 </NavLink>
                 </>
                 ) : (
                     <>
-                    <NavLink to="/login" style={{ background: "#00fffc", color: "black"}}>
+                    <NavLink to="/login" className="loginLink">
                         Login
                     </NavLink>
-                    <NavLink to="/sign-up" style={{ background: "#51538f", color: "white"}}>
+                    <NavLink to="/sign-up" className="signupLink">
                         SignUp 
                     </NavLink>
                     </>

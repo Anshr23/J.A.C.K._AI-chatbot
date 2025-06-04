@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { checkAuthStatus, loginUser } from "../helpers/apiCommunicator";
 
 type User = {
     name: string;
@@ -9,29 +10,43 @@ type UserAuth = {
     user: User | null;
     login: (email: string, password: string) => Promise<void>;
     signup: (name: string, email: string, password: string) => Promise<void>;
-    logout: () => Promise<void>;
+    signout: () => Promise<void>;
 };
 const AuthContext = createContext<UserAuth | null>(null);
 
 export const AuthProvider = ({ children }: {children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     //
 useEffect(() => {
     // fetch if the user's cookies are valid then skip login
+    async function checkStatus() {
+        const data = await checkAuthStatus();
+        if(data) {
+            setUser({ email: data.email, name: data.name });
+            setIsLoggedIn(true);
+        }
+    }
+    checkStatus(); //to get token
+}, []);
 
-    }, []);
+    const login = async(email: string, password: string) => {
+        const data = await loginUser(email, password);
+        if(data) {
+            setUser({ email: data.email, name: data.name });
+            setIsLoggedIn(true);
+        }
+    };
 
-    const login = async(email: string, password: string) => {};
     const signup = async (name: string, email: string, password: string) => {};
-    const logout = async () => {};
+    const signout = async () => {};
 
     const value = {
         user,
         isLoggedIn,
         login,
-        logout,
+        signout,
         signup,
     };
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

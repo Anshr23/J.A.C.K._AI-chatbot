@@ -48,7 +48,7 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
             httpOnly: true,
             signed: true,
         });
-        res.status(201).json({ message: "OK", id: user._id.toString() });
+        res.status(201).json({ message: "OK", name: user.name, email: user.email });
         
     } catch (error) {
         console.log(error);
@@ -56,7 +56,7 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
     }
 };
 
-export const user = async(req: Request, res: Response, next: NextFunction) => {
+export const userLogin = async(req: Request, res: Response, next: NextFunction) => {
     try {
         //user login
         const { email, password } = req.body;
@@ -88,7 +88,7 @@ export const user = async(req: Request, res: Response, next: NextFunction) => {
             signed: true,
         });
 
-        res.status(200).json({ message: "OK", id: user._id.toString() });
+        res.status(200).json({ message: "OK", name: user.name, email: user.email });
     } catch (error) {
         console.log(error);
         res.status(200).json({message: "ERROR", cause: error.message });
