@@ -1,9 +1,11 @@
-import React, { useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import { Box , Avatar, Button , Typography, IconButton } from '@mui/material'
 import { useAuth } from '../context/AuthContext'
 import { red } from "@mui/material/colors/"
 import Chatitem from '../components/chats/Chatitem';
 import { IoMdSend } from 'react-icons/io';
+import { deleteUserChats, getUserChats, sendChatRequest } from '../helpers/apiCommunicator';
+import toast from 'react-hot-toast';
 
 //type ChatRole = "user" | "assistant";
 // const chatMessages: { role: ChatRole; content: string }[] = [
@@ -39,13 +41,46 @@ const Chat = () => {
       inputRef.current.value = "";
     }
     const newMessage: Messages = { role: "user", content};
-    setChatMessages((prev)=> [...prev, newMessage])
+    setChatMessages((prev)=> [...prev, newMessage]);
+
+    const chatData = await sendChatRequest(content);
+    setChatMessages([...chatData.chats]);
+
+    //
+    
   };
+
+  const handleDeleteChats = async() => {
+    try {
+      toast.loading("Deleting Chats", { id: "deletechats" });
+      await deleteUserChats();
+      setChatMessages([]);
+      toast.success("Deleted Chats Successfully", { id: "deletechats" });
+    } catch(error) {
+      console.log(error);
+      toast.error("Deleting chats failed", { id: "deletechats" });
+    }
+  }
+
+  useLayoutEffect(() => {
+    if (auth?.isLoggedIn && auth.user) {
+      toast.loading("Loading Chats", { id: "loadchats" });
+      getUserChats()
+        .then((data) => {
+          setChatMessages([...data.chats]);
+          toast.success("Successfully loaded chats", { id: "loadchats" });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Loading Failed", { id: "loadchats" });
+        });
+    }
+  }, [auth]);
   return (
     <Box
     sx={{
       display: "flex", flex: 1, width: "100%", height: "100%", mt: 3, gap: 3,
-      px: { xs: 2, sm: 3, md: 0 }
+      //px: { xs: 2, sm: 3, md: 0 }
     }}>
       <Box sx={{display: { md: "flex", xs: "none", sm: "none", flex: 0.2, flexDirection: "column"}}}>
         <Box 
@@ -78,6 +113,7 @@ const Chat = () => {
             But avoid sharing personal information
           </Typography>
           <Button 
+          onClick={handleDeleteChats}
           sx={{
             width: "208px",
             my: 'auto',

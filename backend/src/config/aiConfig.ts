@@ -7,6 +7,6 @@ export const configureOpenAI = () => {
     });
     // return config;
     return {
-        apiKey: process.env.OPENAI_API_KEY,
+        apiKey: process.env.OPEN_AI_SECRET,
     };
 }
