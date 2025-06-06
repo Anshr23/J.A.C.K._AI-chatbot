@@ -3,6 +3,8 @@ import User from '../models/User';
 import { hash , compare } from 'bcrypt';
 import { createToken } from '../utils/tokenManager';
 
+const COOKIE_NAME = process.env.COOKIE_NAME;
+
 export const getAllUsers = async(req: Request, res: Response, next: NextFunction) => {
     try {
         //get all users from the database
@@ -69,7 +71,6 @@ export const userLogin = async(req: Request, res: Response, next: NextFunction) 
             res.status(403).send("Incorrect Password !");
         }
 
-        const COOKIE_NAME = process.env.COOKIE_NAME;
         res.clearCookie(COOKIE_NAME, {
             domain: "localhost",
             path: "/",
@@ -113,4 +114,27 @@ export const verifyUser = async ( req: Request, res: Response, next: NextFunctio
   }
 };
 
+export const userSignout = async ( req: Request, res: Response, next: NextFunction ) => {
+  try {
+    //user token check
+    const user = await User.findById(res.locals.jwtData.id);
+    if (!user) {
+      res.status(401).send("User not registered OR Token malfunctioned");
+    }
+    if (user._id.toString() !== res.locals.jwtData.id) {
+      res.status(401).send("Permissions didn't match");
+    }
 
+    res.clearCookie(COOKIE_NAME, {
+            httpOnly: true,
+            domain: "localhost",
+            signed: true,
+            path: "/",
+        });
+
+    res.status(200).json({ message: "OK", name: user.name, email: user.email });
+  } catch (error) {
+    console.log(error);
+    res.status(200).json({ message: "ERROR", cause: error.message });
+  }
+};

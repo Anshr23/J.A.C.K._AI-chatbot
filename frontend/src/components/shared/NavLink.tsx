@@ -2,28 +2,54 @@ import { Link } from "react-router-dom";
 
 type Props = {
     to: string; 
-    children: React.ReactNode;
+    children: React.ReactNode; // Accept children for text content
     onClick?: () => Promise<void>;
-    className?: string; // for extra styling if needed
+    className?: string; // Accept className for global styles
 };
 
 const NavLink = (props: Props) => {
   return (
     <Link
-        className={`navLink ${props.className || ""}`}
+        className={`navLink ${props.className || ""}`} // Use global CSS class here
         to={props.to}
         onClick={props.onClick}
     > 
-      {props.children}
+      {props.children} 
     </Link>
   )
 }
 
 export default NavLink;
 
+
+
+
+// import { Link } from "react-router-dom";
+// import styles from './index.module.css';
+
+// type Props = {
+//     to: string; 
+//     children: React.ReactNode;
+//     onClick?: () => Promise<void>;
+//     className?: string; // For additional global classes
+// };
+
+// const NavLink = (props: Props) => {
+//   return (
+//     <Link
+//         className={`navLink ${props.className || ""}`}
+//         to={props.to}
+//         onClick={props.onClick}
+//     > 
+//       {props.children}
+//     </Link>
+//   )
+// }
+
+// export default NavLink;
+
 /*
-import { Link } from "react-router-dom";
-import styles from './index.module.css';
+
 
 type Props = {
     to: string; 

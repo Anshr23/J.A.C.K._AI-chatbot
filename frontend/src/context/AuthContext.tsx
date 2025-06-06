@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { checkAuthStatus, loginUser } from "../helpers/apiCommunicator";
+import { checkAuthStatus, loginUser, signoutUser } from "../helpers/apiCommunicator";
 
 type User = {
     name: string;
@@ -42,7 +42,12 @@ useEffect(() => {
     };
 
     const signup = async (name: string, email: string, password: string) => {};
-    const signout = async () => {};
+    const signout = async () => {
+        await signoutUser();
+        setIsLoggedIn(false);
+        setUser(null);
+        window.location.reload;
+    };
 
     const value = {
         user,

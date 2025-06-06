@@ -1,10 +1,11 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Box , Avatar, Button , Typography, IconButton } from '@mui/material'
 import { useAuth } from '../context/AuthContext'
 import { red } from "@mui/material/colors/"
 import Chatitem from '../components/chats/Chatitem';
 import { IoMdSend } from 'react-icons/io';
 import { deleteUserChats, getUserChats, sendChatRequest } from '../helpers/apiCommunicator';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 //type ChatRole = "user" | "assistant";
@@ -31,6 +32,7 @@ type Messages = {
 }
 
 const Chat = () => {
+  const navigate = useNavigate();
   const auth = useAuth();
   const inputRef = useRef <HTMLInputElement| null>(null);
   const [chatMessages, setChatMessages] = useState<Messages[]>([])
@@ -76,6 +78,14 @@ const Chat = () => {
         });
     }
   }, [auth]);
+
+  useEffect(() => {
+    if (!auth?.user) {
+      navigate("/login");
+    }
+  }, [auth]);
+    
+
   return (
     <Box
     sx={{
