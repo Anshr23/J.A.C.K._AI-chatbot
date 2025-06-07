@@ -168,8 +168,8 @@ const Chat = () => {
         <div 
         style={{
           width: "100%", 
-          boxSizing: "border-box",
-          padding: "12px 20px",
+          //boxSizing: "border-box",
+          //padding: "12px 20px",
           borderRadius: 8, 
           backgroundColor: "rgb(17,29,39)",
           display: "flex",
@@ -185,14 +185,14 @@ const Chat = () => {
           style={{
             flex: 1,
             backgroundColor: "transparent", 
-            padding: "10px 15px",
+            padding: "30px",
             border: "none", 
             outline: "none", 
             color: "white", 
             fontSize: "16px",
             borderRadius: "10px",
           }}/>
-          <IconButton onClick={handleSubmit} sx={{ml: "auto", color: "white"}}><IoMdSend/></IconButton>
+          <IconButton onClick={handleSubmit} sx={{ml: "auto", color: "white", mx: 1}}><IoMdSend/></IconButton>
         </div>
       </Box>
     </Box>
