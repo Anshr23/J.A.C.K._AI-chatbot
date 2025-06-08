@@ -8,7 +8,7 @@ const Logo = () => {
         display: "flex", marginRight: "auto", alignItems: "center", gap: "15px",
     }}>
         <Link to={"/"}>
-            <img src='logo.png' alt='J.A.C.K.' width={'30px'} height={'30px'} className='image-inverted' />
+            <img src='logo.png' alt='J.A.C.K.' width={'30px'} height={'30px'}  />
         </Link>
         <Typography sx={{
                 display: { md: "block", sm: "none", xs: "none" },
