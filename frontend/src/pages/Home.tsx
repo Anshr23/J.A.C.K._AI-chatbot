@@ -1,4 +1,4 @@
-import { Box, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
 import TypingAnim from "../components/shared/TypingAnim";
 import Footer from "../components/shared/Footer";
@@ -8,9 +8,13 @@ const Home = () => {
   const isBelowMd = useMediaQuery(theme.breakpoints.down("md"));
   return (
     <Box width={"100%"} height={"100%"}>
+      < Typography sx={{ mx: "auto", fontFamily: "work sans" , ml: 2}}>
+                Just A Clever Knowledge-bot
+        </Typography>
       <Box 
         sx={{ display: "flex", width: "100%", flexDirection: "column", alignItems: "center", mx: "auto", mt: 3, }}>
       <Box>
+        
           <TypingAnim />
         </Box>
         <Box

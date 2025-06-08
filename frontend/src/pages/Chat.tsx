@@ -90,18 +90,19 @@ const Chat = () => {
     <Box
     sx={{
       display: "flex", flex: 1, width: "100%", height: "100%", mt: 3, gap: 3,
-      //px: { xs: 2, sm: 3, md: 0 }
+      px: { xs: 2, sm: 3, md: 5 },
+      boxSizing: "border-box",
     }}>
       <Box sx={{display: { md: "flex", xs: "none", sm: "none", flex: 0.2, flexDirection: "column"}}}>
         <Box 
         sx={{
           display:"flex", 
-          width: "100%", 
+          //width: "100%", 
           height: "60vh", 
           bgcolor: "rgb(17,29,29)", 
           borderRadius: 5, 
           flexDirection: "column",
-          mx: 3,
+          //mx: 3,
         }}>
           <Avatar
           sx={{
@@ -144,11 +145,11 @@ const Chat = () => {
         <Typography
         sx={{textAlign: "center", fontSize: "48px", color: "white", mb: 2, mx: "auto"}}
         >
-          Model - GPT 3.5 Turbo
+          Model - JACK v1
         </Typography>
         <Box
         sx={{
-          width: "100%", 
+          //width: "100%", 
           height: "60vh", 
           borderRadius: 3, 
           mx: "auto", 
@@ -168,8 +169,8 @@ const Chat = () => {
         <div 
         style={{
           width: "100%", 
-          //boxSizing: "border-box",
-          //padding: "12px 20px",
+          boxSizing: "border-box",
+          padding: "12px 20px",
           borderRadius: 8, 
           backgroundColor: "rgb(17,29,39)",
           display: "flex",
@@ -185,14 +186,14 @@ const Chat = () => {
           style={{
             flex: 1,
             backgroundColor: "transparent", 
-            padding: "30px",
+            //padding: "15px",
             border: "none", 
             outline: "none", 
             color: "white", 
             fontSize: "16px",
             borderRadius: "10px",
           }}/>
-          <IconButton onClick={handleSubmit} sx={{ml: "auto", color: "white", mx: 1}}><IoMdSend/></IconButton>
+          <IconButton onClick={handleSubmit} sx={{ml: "auto", color: "white"}}><IoMdSend/></IconButton>
         </div>
       </Box>
     </Box>

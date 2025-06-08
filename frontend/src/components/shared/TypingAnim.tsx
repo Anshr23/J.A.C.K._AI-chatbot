@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import { TypeAnimation } from "react-type-animation";
 
 const TypingAnim = () => {
