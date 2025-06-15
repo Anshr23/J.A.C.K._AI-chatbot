@@ -7,7 +7,7 @@ import cors from "cors";
 config(); // Load environment variables from .env file
 const app = express();
 
-app.use(cors({origin: "http://localhost:5173", credentials: true }));
+app.use(cors({origin: process.env.FRONTEND_URL, credentials: true }));
 
 //middleware to parse JSON and URL-encoded data
 app.use(express.json());
