@@ -40,6 +40,7 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
             domain: process.env.APP_DOMAIN,
             expires,
             httpOnly: true,
+            signed: true,
             secure: true,
             sameSite: "none",
         });
@@ -72,6 +73,7 @@ export const userLogin = async(req: Request, res: Response, next: NextFunction) 
             domain: process.env.APP_DOMAIN,
             expires,
             httpOnly: true,
+            signed: true,
             secure: true,
             sameSite: "none",
         });
