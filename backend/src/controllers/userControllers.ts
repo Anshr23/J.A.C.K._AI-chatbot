@@ -21,7 +21,7 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
         const {name, email, password} = req.body;
         const existingUser = await User.findOne({ email });
         if(existingUser) {
-            res.status(401).json({ message: "User already registered" });
+            return res.status(401).json({ message: "User already registered" });
         }
         const hashedPassword = await hash(password, 10);
         const user = new User({name , email, password: hashedPassword});
@@ -58,11 +58,11 @@ export const userLogin = async(req: Request, res: Response, next: NextFunction) 
         const { email, password } = req.body;
         const user = await User.findOne({ email });
         if(!user) {
-            res.status(401).send("User not registered");
+            return res.status(401).send("User not registered");
         }
         const isPasswordCorrect = await compare(password, user.password);
         if(!isPasswordCorrect){
-            res.status(403).send("Incorrect Password !");
+            return res.status(403).send("Incorrect Password !");
         }
 
         const token = createToken(user._id.toString(), user.email, "7d");
@@ -91,10 +91,10 @@ export const verifyUser = async ( req: Request, res: Response, next: NextFunctio
     //user token check
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
-      res.status(401).send("User not registered OR Token malfunctioned");
+      return res.status(401).send("User not registered OR Token malfunctioned");
     }
     if (user._id.toString() !== res.locals.jwtData.id) {
-      res.status(401).send("Permissions didn't match");
+      return res.status(401).send("Permissions didn't match");
     }
     res.status(200).json({ message: "OK", name: user.name, email: user.email });
   } catch (error) {
@@ -108,10 +108,10 @@ export const userSignout = async ( req: Request, res: Response, next: NextFuncti
     //user token check
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
-      res.status(401).send("User not registered OR Token malfunctioned");
+      return res.status(401).send("User not registered OR Token malfunctioned");
     }
     if (user._id.toString() !== res.locals.jwtData.id) {
-      res.status(401).send("Permissions didn't match");
+      return res.status(401).send("Permissions didn't match");
     }
 
     res.clearCookie(COOKIE_NAME, {
