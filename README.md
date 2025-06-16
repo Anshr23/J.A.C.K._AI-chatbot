@@ -1,5 +1,8 @@
 # J.A.C.K. (Just A Clever Knowledge-bot)
 
+## Live Demo
+[JACK AIChatbot](https://j-a-c-k-ai-chatbot-1.onrender.com)
+
 ## Project Overview
 
 J.A.C.K. is an intelligent chatbot designed to provide information and assistance across various domains such as knowledge, business, advice, and education. This is a full-stack MERN (MongoDB, Express.js, React, Node.js) application that leverages advanced AI capabilities to offer a conversational experience.
