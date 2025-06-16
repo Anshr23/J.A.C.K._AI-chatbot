@@ -1,7 +1,7 @@
 # J.A.C.K. (Just A Clever Knowledge-bot)
 
 ## Live Demo
-[JACK AIChatbot](https://j-a-c-k-ai-chatbot-1.onrender.com)
+[JACK AIChatbot](https://jack-aichatbot-frontend.onrender.com)
 
 ## Project Overview
 
