@@ -31,14 +31,6 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
         if (!COOKIE_NAME) {
             throw new Error("COOKIE_NAME is not defined in environment variables");
         }
-        res.clearCookie(COOKIE_NAME, {
-            domain: process.env.APP_DOMAIN,
-            path: "/",
-            httpOnly: true,
-            signed: true,
-            secure: true,
-            sameSite: "none",
-        });
 
         const token = createToken(user._id.toString(), user.email, "7d");
         const expires = new Date();
