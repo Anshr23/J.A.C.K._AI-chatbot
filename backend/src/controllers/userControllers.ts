@@ -40,7 +40,6 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
             domain: process.env.APP_DOMAIN,
             expires,
             httpOnly: true,
-            signed: true,
             secure: true,
             sameSite: "none",
         });
@@ -65,15 +64,6 @@ export const userLogin = async(req: Request, res: Response, next: NextFunction) 
             res.status(403).send("Incorrect Password !");
         }
 
-        res.clearCookie(COOKIE_NAME, {
-            domain: process.env.APP_DOMAIN,
-            path: "/",
-            httpOnly: true,
-            signed: true,
-            secure: true,
-            sameSite: "none",
-        });
-
         const token = createToken(user._id.toString(), user.email, "7d");
         const expires = new Date();
         expires.setDate(expires.getDate() + 7);
@@ -82,7 +72,6 @@ export const userLogin = async(req: Request, res: Response, next: NextFunction) 
             domain: process.env.APP_DOMAIN,
             expires,
             httpOnly: true,
-            signed: true,
             secure: true,
             sameSite: "none",
         });
