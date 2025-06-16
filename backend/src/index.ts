@@ -1,8 +1,19 @@
+import express from "express";
+import { config } from "dotenv";
 import app from "./app.js";
 import { connectToDatabase } from "./db/connection.js";
+import userRoutes from "./routes/userRoute.js";
+import chatRoutes from "./routes/chatRoute.js";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
+config();
 const PORT = process.env.PORT || 5001;
 
+//middlewares
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 
 // app.post("/first", (req, res, next) => {
 //   //getting info from static route 
@@ -24,6 +35,9 @@ const PORT = process.env.PORT || 5001;
 // );
 
 //connections and listeners
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/chat", chatRoutes);
+
 connectToDatabase()
   .then(() => {
     app.listen(PORT, () => {
