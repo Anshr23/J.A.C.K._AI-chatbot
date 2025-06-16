@@ -29,15 +29,16 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
         await user.save();
 
         //create token and store cookie
-        const COOKIE_NAME = process.env.COOKIE_NAME;
         if (!COOKIE_NAME) {
             throw new Error("COOKIE_NAME is not defined in environment variables");
         }
         res.clearCookie(COOKIE_NAME, {
-            domain: "localhost",
+            domain: process.env.APP_DOMAIN,
             path: "/",
             httpOnly: true,
             signed: true,
+            secure: true,
+            sameSite: "none",
         });
 
         const token = createToken(user._id.toString(), user.email, "7d");
@@ -45,10 +46,12 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
         expires.setDate(expires.getDate() + 7);
         res.cookie(COOKIE_NAME, token, {
             path: "/",
-            domain: "localhost",
+            domain: process.env.APP_DOMAIN,
             expires,
             httpOnly: true,
             signed: true,
+            secure: true,
+            sameSite: "none",
         });
         res.status(201).json({ message: "OK", name: user.name, email: user.email });
         
@@ -72,10 +75,12 @@ export const userLogin = async(req: Request, res: Response, next: NextFunction) 
         }
 
         res.clearCookie(COOKIE_NAME, {
-            domain: "localhost",
+            domain: process.env.APP_DOMAIN,
             path: "/",
             httpOnly: true,
             signed: true,
+            secure: true,
+            sameSite: "none",
         });
 
         const token = createToken(user._id.toString(), user.email, "7d");
@@ -83,10 +88,12 @@ export const userLogin = async(req: Request, res: Response, next: NextFunction) 
         expires.setDate(expires.getDate() + 7);
         res.cookie(COOKIE_NAME, token, {
             path: "/",
-            domain: "localhost",
+            domain: process.env.APP_DOMAIN,
             expires,
             httpOnly: true,
             signed: true,
+            secure: true,
+            sameSite: "none",
         });
 
         res.status(200).json({ message: "OK", name: user.name, email: user.email });
@@ -127,9 +134,11 @@ export const userSignout = async ( req: Request, res: Response, next: NextFuncti
 
     res.clearCookie(COOKIE_NAME, {
             httpOnly: true,
-            domain: "localhost",
+            domain: process.env.APP_DOMAIN,
             signed: true,
             path: "/",
+            secure: true,
+            sameSite: "none",
         });
 
     res.status(200).json({ message: "OK", name: user.name, email: user.email });
