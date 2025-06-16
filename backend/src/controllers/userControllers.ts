@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 import { hash , compare } from 'bcrypt';
 import { createToken } from '../utils/tokenManager';
-
-const COOKIE_NAME = process.env.COOKIE_NAME;
+import { COOKIE_NAME } from "../utils/constants.js";
 
 export const getAllUsers = async(req: Request, res: Response, next: NextFunction) => {
     try {
