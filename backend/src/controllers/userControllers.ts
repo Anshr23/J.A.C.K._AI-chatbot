@@ -10,9 +10,11 @@ export const getAllUsers = async(req: Request, res: Response, next: NextFunction
         //get all users from the database
         const users = await User.find();
         res.status(201).json({ message: "OK", users});
+        return;
     } catch (error) {
         console.log(error);
         res.status(200).json({message: "ERROR", cause: error.message});
+        return;
     }
 };
 
@@ -51,10 +53,12 @@ export const userSignup = async(req: Request, res: Response, next: NextFunction)
             signed: true,
         });
         res.status(201).json({ message: "OK", name: user.name, email: user.email });
+        return;
         
     } catch (error) {
         console.log(error);
         res.status(200).json({message: "ERROR", cause: error.message});
+        return;
     }
 };
 
@@ -65,10 +69,12 @@ export const userLogin = async(req: Request, res: Response, next: NextFunction) 
         const user = await User.findOne({ email });
         if(!user) {
             res.status(401).send("User not registered");
+            return;
         }
         const isPasswordCorrect = await compare(password, user.password);
         if(!isPasswordCorrect){
             res.status(403).send("Incorrect Password !");
+            return;
         }
 
         res.clearCookie(COOKIE_NAME, {
@@ -90,9 +96,11 @@ export const userLogin = async(req: Request, res: Response, next: NextFunction) 
         });
 
         res.status(200).json({ message: "OK", name: user.name, email: user.email });
+        return;
     } catch (error) {
         console.log(error);
         res.status(200).json({message: "ERROR", cause: error.message });
+        return;
     }
 };
 
@@ -103,14 +111,18 @@ export const verifyUser = async ( req: Request, res: Response, next: NextFunctio
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
       res.status(401).send("User not registered OR Token malfunctioned");
+      return;
     }
     if (user._id.toString() !== res.locals.jwtData.id) {
       res.status(401).send("Permissions didn't match");
+      return;
     }
     res.status(200).json({ message: "OK", name: user.name, email: user.email });
+    return;
   } catch (error) {
     console.log(error);
     res.status(200).json({ message: "ERROR", cause: error.message });
+    return;
   }
 };
 
@@ -120,9 +132,11 @@ export const userSignout = async ( req: Request, res: Response, next: NextFuncti
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
       res.status(401).send("User not registered OR Token malfunctioned");
+      return;
     }
     if (user._id.toString() !== res.locals.jwtData.id) {
       res.status(401).send("Permissions didn't match");
+      return;
     }
 
     res.clearCookie(COOKIE_NAME, {
@@ -133,8 +147,10 @@ export const userSignout = async ( req: Request, res: Response, next: NextFuncti
         });
 
     res.status(200).json({ message: "OK", name: user.name, email: user.email });
+    return;
   } catch (error) {
     console.log(error);
     res.status(200).json({ message: "ERROR", cause: error.message });
+    return;
   }
 };

@@ -13,6 +13,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     const token = req.signedCookies[`${process.env.COOKIE_NAME}`];
     if(!token || token.trim() === ""){
         res.status(401).json({ message: "Token Not Recieved" })
+        return;
     }
     //console.log(token);
     return new Promise<void>((resolve, reject) => { 
@@ -20,6 +21,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
             if(err) {
                 reject(err.message);
                 res.status(401).json({ message: "Token Expired" });
+                return;
             } else {
                 //console.log("Token Verification Successful");
                 resolve();

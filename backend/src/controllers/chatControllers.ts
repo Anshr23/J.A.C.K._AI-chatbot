@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User";
 import OpenAI from "openai";
-import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { configureOpenAI } from "../config/aiConfig";
-
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 export const generateChatCompletion = async (req: Request, res: Response, next: NextFunction) => {
     const { message } = req.body;
@@ -12,17 +11,19 @@ export const generateChatCompletion = async (req: Request, res: Response, next: 
 
         const user = await User.findById(res.locals.jwtData.id);
         if(!user) {
-            res.status(401).json({message:"User not registered or token malfunctioned"})
+            res.status(401).json({message:"User not registered or token malfunctioned"});
+            return;
         }
 
         //grab chats of user
-        const chats = user.chats.map(({ role, content }) => ({ role, content })) as ChatCompletionMessageParam[];
+        const chats = user.chats.map(({ role, content }) => ({ role, content }))  as ChatCompletionMessageParam[] ;
         chats.push({ content: message, role: "user" }); 
         user.chats.push({ content: message, role: "user" });
 
         // send all chats with new one to openAI API
-        const config = configureOpenAI();
-        const openai = new OpenAI(config);
+        // const config = configureOpenAI();
+        // const openai = new OpenAI(config);
+        const openai = configureOpenAI();
         
         // get latest response
         const chatResponse = await openai.chat.completions.create({
@@ -32,10 +33,12 @@ export const generateChatCompletion = async (req: Request, res: Response, next: 
         user.chats.push(chatResponse.choices[0].message);
         await user.save();
         res.status(200).json({ chats: user.chats });
+        return;
         
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "something went wrong" });
+        return;
     }
 
 };
@@ -46,14 +49,18 @@ export const sendChatsToUser = async(req: Request, res: Response, next: NextFunc
         const user = await User.findById(res.locals.jwtData.id);
         if (!user) {
             res.status(401).send("User not registered OR Token malfunctioned");
+            return;
         }
         if (user._id.toString() !== res.locals.jwtData.id) {
             res.status(401).send("Permissions didn't match");
+            return;
         }
         res.status(200).json({ message: "OK", chats: user.chats });
+        return;
     } catch (error) {
         console.log(error);
         res.status(200).json({message: "ERROR", cause: error.message });
+        return;
     }
 };
 
@@ -63,17 +70,21 @@ export const deleteChats = async (req: Request, res: Response, next: NextFunctio
     const user = await User.findById(res.locals.jwtData.id);
     if (!user) {
       res.status(401).send("User not registered OR Token malfunctioned");
+      return;
     }
     if (user._id.toString() !== res.locals.jwtData.id) {
       res.status(401).send("Permissions didn't match");
+      return;
     }
     //@ts-ignore
     user.chats = [];
     // user.chats.splice(0, user.chats.length);
     await user.save();
     res.status(200).json({ message: "OK" });
+    return;
   } catch (error) {
     console.log(error);
     res.status(200).json({ message: "ERROR", cause: error.message });
+    return;
   }
 };

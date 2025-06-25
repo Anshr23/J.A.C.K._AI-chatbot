@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Box , Avatar, Button , Typography, IconButton } from '@mui/material'
 import { useAuth } from '../context/AuthContext'
 import { red } from "@mui/material/colors/"
@@ -48,8 +48,6 @@ const Chat = () => {
     const chatData = await sendChatRequest(content);
     setChatMessages([...chatData.chats]);
 
-    //
-    
   };
 
   const handleDeleteChats = async() => {
@@ -193,7 +191,9 @@ const Chat = () => {
             fontSize: "16px",
             borderRadius: "10px",
           }}/>
-          <IconButton onClick={handleSubmit} sx={{ml: "auto", color: "white"}}><IoMdSend/></IconButton>
+          <IconButton onClick={handleSubmit} sx={{ml: "auto", color: "white"}}>
+            <IoMdSend/>
+          </IconButton>
         </div>
       </Box>
     </Box>
