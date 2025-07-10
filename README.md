@@ -12,7 +12,7 @@ J.A.C.K. is an intelligent chatbot designed to provide information and assistanc
 *   **Responsive UI:** Designed to provide a user-friendly experience across different devices.
 *   **Clear Conversation:** Option to delete all past chat messages.
 
-![Demo GIF](https://raw.githubusercontent.com/Anshr23/J.A.C.K._AI-chatbot/main/frontend/public/demo.gif)
+![Demo GIF](https://raw.githubusercontent.com/Anshr23/J.A.C.K._AI-chatbot/main/frontend/public/demoVid.gif)
 
 ## Technologies Used
 
