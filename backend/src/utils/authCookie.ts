@@ -25,10 +25,6 @@ export const createAuthCookieOptions = (expires?: Date): CookieOptions => {
     options.expires = expires;
   }
 
-  if (cookieDomain) {
-    options.domain = cookieDomain;
-  }
-
   return options;
 };
 
