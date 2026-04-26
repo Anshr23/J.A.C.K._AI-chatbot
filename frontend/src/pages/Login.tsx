@@ -91,6 +91,26 @@ const Login = () => {
       </form>
     </Box>
 
+    {/* Test Credentials for Recruiters
+    <Box
+      sx={{
+        position: "absolute",
+        bottom: 16,
+        left: 16,
+        backgroundColor: "rgba(0, 0, 0, 0.7)",
+        padding: "8px 12px",
+        borderRadius: "4px",
+        fontSize: "12px",
+        color: "white",
+        fontFamily: "monospace",
+        border: "1px solid rgba(255, 255, 255, 0.2)"
+      }}
+    >
+      <div>Test Credentials:</div>
+      <div>gmail → test@gmail.com</div>
+      <div>password → test123</div>
+    </Box> */}
+
     </Box>
   )
 }
