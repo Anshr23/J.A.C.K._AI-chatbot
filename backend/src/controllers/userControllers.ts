@@ -77,6 +77,12 @@ export const verifyUser = async (req: Request, res: Response, next: NextFunction
             res.status(401).send("Permissions didn't match");
             return;
         }
+
+        // Prevent caching of auth status
+        res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+
         res.status(200).json({ message: 'OK', name: user.name, email: user.email });
     } catch (error: any) {
         console.log(error);
@@ -97,6 +103,12 @@ export const userSignout = async (req: Request, res: Response, next: NextFunctio
         }
 
         clearAuthCookie(res);
+
+        // Prevent caching of signout response
+        res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+
         res.status(200).json({ message: 'OK', name: user.name, email: user.email });
     } catch (error: any) {
         console.log(error);
