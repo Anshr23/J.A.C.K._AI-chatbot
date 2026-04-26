@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Avatar, Typography } from "@mui/material";
 import { useAuth } from '../../context/AuthContext';
-import SyntaxHighlighter, { Prism as syntaxHighlighter } from "react-syntax-highlighter"
+import SyntaxHighlighter from "react-syntax-highlighter"
 import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 function extractCodeFromString(message: string) {
@@ -40,13 +40,13 @@ const Chatitem = ({content,role}:{content: string, role: "user"| "assistant"}) =
             )}
             {messageBlocks &&
             messageBlocks.length &&
-            messageBlocks.map((block) =>
+            messageBlocks.map((block, index) =>
                 isCodeBlock(block) ? (
-                <SyntaxHighlighter style={coldarkDark} language="javascript">
+                <SyntaxHighlighter key={`assistant-code-${index}`} style={coldarkDark} language="javascript">
                     {block}
                 </SyntaxHighlighter>
                 ) : (
-                <Typography sx={{ fontSize: "20px" }}>{block}</Typography>
+                <Typography key={`assistant-text-${index}`} sx={{ fontSize: "20px" }}>{block}</Typography>
                 )
             )}
         </Box>
@@ -54,8 +54,8 @@ const Chatitem = ({content,role}:{content: string, role: "user"| "assistant"}) =
     ):( 
     <Box sx={{ display: "flex", P: 2, bgcolor: "#004d56", gap: 2, my: 2, borderRadius: 2}}>
         <Avatar sx={{ ml: "0", bgcolor: "black", color: "white" }}>
-            {auth?.user?.name[0]}
-            {auth?.user?.name.split(" ")[1][0]}
+            {auth?.user?.name?.[0] ?? "U"}
+            {auth?.user?.name?.split(" ")[1]?.[0] ?? ""}
         </Avatar>
         <Box>
             {!messageBlocks && (
@@ -63,13 +63,13 @@ const Chatitem = ({content,role}:{content: string, role: "user"| "assistant"}) =
             )}
             {messageBlocks &&
             messageBlocks.length &&
-            messageBlocks.map((block) =>
+            messageBlocks.map((block, index) =>
                 isCodeBlock(block) ? (
-                <SyntaxHighlighter style={coldarkDark} language="javascript">
+                <SyntaxHighlighter key={`user-code-${index}`} style={coldarkDark} language="javascript">
                     {block}
                 </SyntaxHighlighter>
                 ) : (
-                <Typography sx={{ fontSize: "20px" }}>{block}</Typography>
+                <Typography key={`user-text-${index}`} sx={{ fontSize: "20px" }}>{block}</Typography>
                 )
             )}
         </Box>

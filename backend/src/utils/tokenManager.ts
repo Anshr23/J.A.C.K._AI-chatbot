@@ -1,32 +1,29 @@
 import { NextFunction , Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { Secret, SignOptions } from "jsonwebtoken";
 
-export const createToken = (id: string, email: string, expiresIn) => {
+export const createToken = (id: string, email: string, expiresIn: string | number) => {
     const payload = { id, email };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn,
-    });
+    const secret: Secret = process.env.JWT_SECRET as Secret;
+    const options = { expiresIn: expiresIn as SignOptions['expiresIn'] };
+    const token = jwt.sign(payload, secret, options);
     return token;
 };
 
-export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.signedCookies[`${process.env.COOKIE_NAME}`];
-    if(!token || token.trim() === ""){
-        res.status(401).json({ message: "Token Not Recieved" })
+    if (!token || typeof token !== "string" || token.trim() === "") {
+        res.status(401).json({ message: "Token Not Received" });
+        return;
     }
-    //console.log(token);
-    return new Promise<void>((resolve, reject) => { 
-        return jwt.verify(token, process.env.JWT_SECRET, (err, success) => {
-            if(err) {
-                reject(err.message);
-                res.status(401).json({ message: "Token Expired" });
-            } else {
-                //console.log("Token Verification Successful");
-                resolve();
-                res.locals.jwtData = success;
-                return next();
-            }
-        });
+
+    jwt.verify(token, process.env.JWT_SECRET as string, (err, decoded) => {
+        if (err) {
+            res.status(401).json({ message: "Token Expired" });
+            return;
+        }
+
+        res.locals.jwtData = decoded;
+        next();
     });
 };
 

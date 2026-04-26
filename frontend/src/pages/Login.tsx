@@ -30,7 +30,7 @@ const Login = () => {
     if(auth?.user){
       navigate("/chat")
     }
-  })
+  }, [auth, navigate])
 
   return (
     <Box className="loginBox">

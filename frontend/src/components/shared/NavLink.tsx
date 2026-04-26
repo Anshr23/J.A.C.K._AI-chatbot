@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 type Props = {
     to: string; 
     children: React.ReactNode; // Accept children for text content
-    onClick?: () => Promise<void>;
+    onClick?: () => void | Promise<void>;
     className?: string; // Accept className for global styles
 };
 

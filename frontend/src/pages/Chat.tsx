@@ -1,203 +1,202 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Box , Avatar, Button , Typography, IconButton } from '@mui/material'
-import { useAuth } from '../context/AuthContext'
-import { red } from "@mui/material/colors/"
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Box, Typography } from '@mui/material';
+import { useAuth } from '../context/AuthContext';
 import Chatitem from '../components/chats/Chatitem';
-import { IoMdSend } from 'react-icons/io';
-import { deleteUserChats, getUserChats, sendChatRequest } from '../helpers/apiCommunicator';
-import { useNavigate } from 'react-router-dom';
+import ChatComposer from '../components/chats/ChatComposer';
+import ConversationSidebar from '../components/chats/ConversationSidebar';
+import { createNewConversation, deleteUserChats, getUserChats, sendConversationChatRequest } from '../helpers/apiCommunicator';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-
-//type ChatRole = "user" | "assistant";
-// const chatMessages: { role: ChatRole; content: string }[] = [
-//   { role: "user", content: "Hey JACK, can you summarize this article for me?" },
-//   { role: "assistant", content: "Sure! Please upload or paste the article you'd like summarized." },
-  
-//   { role: "user", content: "Done. Also, what's the weather like in Mumbai today?" },
-//   { role: "assistant", content: "Currently in Mumbai, it's 32°C with scattered clouds. Would you like a 3-day forecast too?" },
-  
-//   { role: "user", content: "Yes, please. Also can you debug this JS code?" },
-//   { role: "assistant", content: "Absolutely! Send over the code snippet and I'll check it right away." },
-  
-//   { role: "user", content: "One more thing — translate this paragraph to French." },
-//   { role: "assistant", content: "Of course. Please provide the paragraph, and I'll translate it for you instantly." },
-  
-//   { role: "user", content: "You're awesome, JACK." },
-//   { role: "assistant", content: "Thanks! I'm here for whatever you need — anytime, any topic." }
-// ];
-
-type Messages = {
-  role: "user" | "assistant" ;
-  content: string;
-}
+import type { ConversationSummary, Message } from '../types/chat';
 
 const Chat = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const auth = useAuth();
-  const inputRef = useRef <HTMLInputElement| null>(null);
-  const [chatMessages, setChatMessages] = useState<Messages[]>([])
-  const handleSubmit = async () =>{
-    //console.log(inputRef.current?.value);
-    const content = inputRef.current?.value as string;
-    if(inputRef && inputRef.current){
-      inputRef.current.value = "";
+  const hasLoadedChatsRef = useRef(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
+  const [conversations, setConversations] = useState<ConversationSummary[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [isSwitchingConversation, setIsSwitchingConversation] = useState(false);
+  const isEmptyConversation = chatMessages.length === 0;
+
+  const sortedConversations = useMemo(
+    () => [...conversations].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
+    [conversations]
+  );
+
+  const handleSubmit = async () => {
+    const content = inputRef.current?.value.trim() ?? '';
+    if (!content) {
+      return;
     }
-    const newMessage: Messages = { role: "user", content};
-    setChatMessages((prev)=> [...prev, newMessage]);
 
-    const chatData = await sendChatRequest(content);
-    setChatMessages([...chatData.chats]);
+    inputRef.current && (inputRef.current.value = '');
+    setChatMessages((prev) => [...prev, { role: 'user', content }]);
 
-    //
-    
+    try {
+      const chatData = await sendConversationChatRequest(content, activeConversationId || undefined);
+      setActiveConversationId(chatData.conversationId || null);
+      setConversations(chatData.conversations || []);
+      setChatMessages([...chatData.chats]);
+    } catch (error) {
+      console.log(error);
+      toast.error('Unable to send chat. Please login again.', { id: 'sendchat' });
+    }
   };
 
-  const handleDeleteChats = async() => {
-    try {
-      toast.loading("Deleting Chats", { id: "deletechats" });
-      await deleteUserChats();
-      setChatMessages([]);
-      toast.success("Deleted Chats Successfully", { id: "deletechats" });
-    } catch(error) {
-      console.log(error);
-      toast.error("Deleting chats failed", { id: "deletechats" });
+  const handleDeleteChats = async () => {
+    const firstConfirm = window.confirm('Are you sure you want to clear this conversation?');
+    if (!firstConfirm) {
+      return;
     }
-  }
 
-  useLayoutEffect(() => {
-    if (auth?.isLoggedIn && auth.user) {
-      toast.loading("Loading Chats", { id: "loadchats" });
+    const secondConfirm = window.confirm('This will permanently delete all messages. Continue?');
+    if (!secondConfirm) {
+      return;
+    }
+
+    try {
+      toast.loading('Deleting Chats', { id: 'deletechats' });
+      const data = await deleteUserChats(activeConversationId || undefined);
+      setActiveConversationId(data.conversationId || null);
+      setConversations(data.conversations || []);
+      setChatMessages(data.chats || []);
+      toast.success('Deleted Chats Successfully', { id: 'deletechats' });
+    } catch (error) {
+      console.log(error);
+      toast.error('Deleting chats failed', { id: 'deletechats' });
+    }
+  };
+
+  const handleStartNewConversation = async () => {
+    if (activeConversationId && isEmptyConversation) {
+      inputRef.current?.focus();
+      return;
+    }
+
+    try {
+      const data = await createNewConversation();
+      setConversations(data.conversations || []);
+      setActiveConversationId(data.conversation?.id || null);
+      setChatMessages([]);
+      inputRef.current?.focus();
+    } catch (error) {
+      console.log(error);
+      toast.error('Unable to start a new chat', { id: 'newchat' });
+    }
+  };
+
+  const handleConversationSelect = async (conversationId: string) => {
+    if (conversationId === activeConversationId) {
+      return;
+    }
+
+    setIsSwitchingConversation(true);
+    setActiveConversationId(conversationId);
+
+    try {
+      const data = await getUserChats(conversationId);
+      setActiveConversationId(data.conversationId || conversationId);
+      setChatMessages(data.chats || []);
+      setConversations(data.conversations || []);
+    } catch (error) {
+      console.log(error);
+      toast.error('Unable to load this conversation', { id: 'loadconversation' });
+    } finally {
+      setIsSwitchingConversation(false);
+    }
+  };
+
+  useEffect(() => {
+    if (auth?.isLoggedIn && auth.user && !hasLoadedChatsRef.current) {
+      hasLoadedChatsRef.current = true;
       getUserChats()
         .then((data) => {
+          setConversations(data.conversations || []);
+          setActiveConversationId(data.conversationId || null);
           setChatMessages([...data.chats]);
-          toast.success("Successfully loaded chats", { id: "loadchats" });
+          if ((!data.conversations || data.conversations.length === 0) && !searchParams.get('new')) {
+            return handleStartNewConversation();
+          }
         })
         .catch((err) => {
           console.log(err);
-          toast.error("Loading Failed", { id: "loadchats" });
+          toast.error('Loading Failed', { id: 'loadchats' });
         });
     }
-  }, [auth]);
+
+    if (!auth?.isLoggedIn) {
+      hasLoadedChatsRef.current = false;
+    }
+  }, [auth?.isLoggedIn, auth?.user?.email]);
+
+  useEffect(() => {
+    if (!auth?.isLoggedIn || !auth?.user) {
+      return;
+    }
+
+    if (searchParams.get('new') === '1') {
+      setSearchParams({}, { replace: true });
+      handleStartNewConversation();
+    }
+  }, [searchParams, auth?.isLoggedIn, auth?.user?.email]);
 
   useEffect(() => {
     if (!auth?.user) {
-      navigate("/login");
+      navigate('/login');
     }
-  }, [auth]);
-    
+  }, [auth?.user, navigate]);
 
   return (
     <Box
-    sx={{
-      display: "flex", flex: 1, width: "100%", height: "100%", mt: 3, gap: 3,
-      px: { xs: 2, sm: 3, md: 5 },
-      boxSizing: "border-box",
-    }}>
-      <Box sx={{display: { md: "flex", xs: "none", sm: "none", flex: 0.2, flexDirection: "column"}}}>
-        <Box 
-        sx={{
-          display:"flex", 
-          //width: "100%", 
-          height: "60vh", 
-          bgcolor: "rgb(17,29,29)", 
-          borderRadius: 5, 
-          flexDirection: "column",
-          //mx: 3,
-        }}>
-          <Avatar
-          sx={{
-            mx: "auto",
-            my: 2, 
-            bgcolor: "white", 
-            color: "black",
-            fontweight: 700,
-          }}
-          >
-            {auth?.user?.name[0]}
-            {auth?.user?.name.split(" ")[1][0]}
-          </Avatar>
-          < Typography sx={{ mx: "auto", fontFamily: "work sans" }}>
-            You are talking to a ChatBOT
-          </Typography>
-          <Typography sx={{ mx: "auto", fontFamily: "work sans" , my: 4, p: 3 }}>
-            You can ask some questions related to Knowledge, Business, Advices, Education, etc. 
-            But avoid sharing personal information
-          </Typography>
-          <Button 
-          onClick={handleDeleteChats}
-          sx={{
-            width: "208px",
-            my: 'auto',
-            color: 'white', 
-            fontweight: "700",
-            borderRadius: 3,
-            mx: "auto",
-            bgcolor: red[300],
-            ":hover": {
-              bgcolor: red.A400,
-            }
-          }}>
-            Clear Conversation 
-            </Button>
-        </Box>
+      sx={{
+        display: 'flex',
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        mt: 3,
+        gap: 3,
+        px: { xs: 2, sm: 3, md: 5 },
+        boxSizing: 'border-box',
+      }}>
+      <Box sx={{ display: { md: 'flex', xs: 'none', sm: 'none' }, flex: 0.2 }}>
+        <ConversationSidebar
+          userName={auth?.user?.name}
+          conversations={sortedConversations}
+          activeConversationId={activeConversationId}
+          isSwitchingConversation={isSwitchingConversation}
+          onConversationSelect={handleConversationSelect}
+          onClearConversation={handleDeleteChats}
+        />
       </Box>
-      <Box sx={{display: "flex", flex: {md: 0.8, xs: 1, sm: 1, flexDirection: "column"} }}>
-        <Typography
-        sx={{textAlign: "center", fontSize: "48px", color: "white", mb: 2, mx: "auto"}}
-        >
+      <Box sx={{ display: 'flex', flex: { md: 0.8, xs: 1, sm: 1 }, flexDirection: 'column' }}>
+        <Typography sx={{ textAlign: 'center', fontSize: '48px', color: 'white', mb: 2, mx: 'auto' }}>
           Model - JACK v1
         </Typography>
+        {isEmptyConversation && <ChatComposer inputRef={inputRef} onSubmit={handleSubmit} maxWidth="760px" />}
         <Box
-        sx={{
-          //width: "100%", 
-          height: "60vh", 
-          borderRadius: 3, 
-          mx: "auto", 
-          display: "flex", 
-          flexDirection: "column",
-          overflow: "scroll",
-          overflowX: "hidden",
-          overflowY: "auto",
-          scrollBehavior: "smooth",
-          px: 1,
-        }}
-        >
-          {chatMessages.map((chat, index) => ( 
-            <Chatitem content={chat.content} role={chat.role} key={index} />
+          sx={{
+            height: '60vh',
+            borderRadius: 3,
+            mx: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'scroll',
+            overflowX: 'hidden',
+            overflowY: 'auto',
+            scrollBehavior: 'smooth',
+            px: 1,
+          }}>
+          {chatMessages.map((chat, index) => (
+            <Chatitem content={chat.content} role={chat.role} key={chat.id || `${chat.role}-${index}`} />
           ))}
         </Box>
-        <div 
-        style={{
-          width: "100%", 
-          boxSizing: "border-box",
-          padding: "12px 20px",
-          borderRadius: 8, 
-          backgroundColor: "rgb(17,29,39)",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          margin: "auto",
-          marginTop: "20px",
-        }}>
-          { " " }
-          <input
-          ref={inputRef}
-          type="text"
-          style={{
-            flex: 1,
-            backgroundColor: "transparent", 
-            //padding: "15px",
-            border: "none", 
-            outline: "none", 
-            color: "white", 
-            fontSize: "16px",
-            borderRadius: "10px",
-          }}/>
-          <IconButton onClick={handleSubmit} sx={{ml: "auto", color: "white"}}><IoMdSend/></IconButton>
-        </div>
+        {!isEmptyConversation && <ChatComposer inputRef={inputRef} onSubmit={handleSubmit} />}
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default Chat
+export default Chat;

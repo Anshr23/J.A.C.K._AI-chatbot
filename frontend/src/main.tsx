@@ -1,4 +1,3 @@
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
@@ -7,7 +6,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.tsx';
 
 import axios from 'axios';
-axios.defaults.baseURL = "http://localhost:5001/api/v1";
+const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1';
+axios.defaults.baseURL = apiBaseUrl;
 axios.defaults.withCredentials = true;
 
 import { Toaster } from 'react-hot-toast';
@@ -20,7 +20,6 @@ const theme = createTheme({
 });
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
     <AuthProvider>
     <BrowserRouter>
     <ThemeProvider theme={theme}>
@@ -29,5 +28,4 @@ createRoot(document.getElementById('root')!).render(
     </ThemeProvider>
     </BrowserRouter>
     </AuthProvider>
-  </StrictMode>,
 )

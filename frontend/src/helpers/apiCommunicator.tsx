@@ -10,12 +10,18 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const signupUser = async (name: string, email: string, password: string) => {
-    const res = await axios.post("/user/signup",{ name, email, password });
-    if(res.status !== 201) {
+    try {
+        const res = await axios.post("/user/signup", { name, email, password });
+        if (res.status !== 201) {
+            throw new Error("Unable to Signup");
+        }
+        return res.data;
+    } catch (error: any) {
+        if (error.response?.data?.message) {
+            throw new Error(error.response.data.message);
+        }
         throw new Error("Unable to Signup");
     }
-    const data = await res.data;
-    return data;
 };
 
 export const checkAuthStatus = async () => {
@@ -28,7 +34,11 @@ export const checkAuthStatus = async () => {
 };
 
 export const sendChatRequest = async (message: string) => {
-  const res = await axios.post("/chat/new", { message });
+  return sendConversationChatRequest(message);
+};
+
+export const sendConversationChatRequest = async (message: string, conversationId?: string) => {
+  const res = await axios.post("/chat/new", { message, conversationId });
   if (res.status !== 200) {
     throw new Error("Unable to send chat");
   }
@@ -36,8 +46,8 @@ export const sendChatRequest = async (message: string) => {
   return data;
 };
 
-export const getUserChats = async () => {
-  const res = await axios.get("/chat/all-chats");
+export const getUserChats = async (conversationId?: string) => {
+  const res = await axios.get("/chat/all-chats", { params: { conversationId } });
   if (res.status !== 200) {
     throw new Error("Unable to send chat");
   }
@@ -45,8 +55,26 @@ export const getUserChats = async () => {
   return data;
 };
 
-export const deleteUserChats = async () => {
-  const res = await axios.delete("/chat/delete");
+export const getUserConversations = async () => {
+  const res = await axios.get("/chat/conversations");
+  if (res.status !== 200) {
+    throw new Error("Unable to load conversations");
+  }
+  const data = await res.data;
+  return data;
+};
+
+export const createNewConversation = async (title?: string) => {
+  const res = await axios.post("/chat/new-conversation", { title });
+  if (res.status !== 201 && res.status !== 200) {
+    throw new Error("Unable to create conversation");
+  }
+  const data = await res.data;
+  return data;
+};
+
+export const deleteUserChats = async (conversationId?: string) => {
+  const res = await axios.delete("/chat/delete", { data: { conversationId } });
   if (res.status !== 200) {
     throw new Error("Unable to delete chats");
   }

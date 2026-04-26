@@ -12,26 +12,27 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    //console.log(email , password);
     try {
       toast.loading("Signing-up", {id: "signup"});
-      await auth?.signup(name, email,password);
+      await auth?.signup(name, email, password);
       toast.success("signed up successfully", {id: "signup"});
-    } catch(error){
-      console.log(error);
-      toast.error("unable to sign-up", {id: "signup"});
+      form.reset();
+    } catch (error: any) {
+      const message = error?.message || "Unable to sign-up";
+      toast.error(message, {id: "signup"});
     }
-  };
+  }
 
-  useEffect(()=>{
-    if(auth?.user){
-      navigate("/chat")
+  useEffect(() => {
+    if (auth?.user) {
+      navigate("/chat");
     }
-  })
+  }, [auth, navigate]);
 
   return (
     <Box className="loginBox">
