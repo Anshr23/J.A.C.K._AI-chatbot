@@ -5,10 +5,12 @@ import appRouter from './routes/index.js'; // Import the appRouter from routes/i
 import cookieParser from 'cookie-parser';
 import cors from "cors";
 const app = express();
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+
+const isDev = process.env.NODE_ENV === "development";
+
+const allowedOrigins = isDev
+  ? [(process.env.IN_LOCALHOST || "http://localhost:5173").trim()]
+  : [(process.env.FRONTEND_URL || "").trim()];
 
 app.use(cors({
     origin: (origin, callback) => {

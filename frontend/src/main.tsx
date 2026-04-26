@@ -6,7 +6,12 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.tsx';
 
 import axios from 'axios';
-const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1';
+const isDev = import.meta.env.VITE_NODE_ENV === "development";
+
+const apiBaseUrl = isDev
+  ? (import.meta.env.VITE_IN_LOCALHOST || "http://localhost:5001") + "/api/v1"
+  : (import.meta.env.VITE_BACKEND_URL || "") + "/api/v1";
+
 axios.defaults.baseURL = apiBaseUrl;
 axios.defaults.withCredentials = true;
 
