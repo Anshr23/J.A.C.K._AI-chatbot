@@ -1,4 +1,5 @@
-import { Box, Avatar } from "@mui/material";
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
 import Typography from '@mui/material/Typography';
 import { useAuth } from '../../context/AuthContext';
 import SyntaxHighlighter from "react-syntax-highlighter"

@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
-import { Box , Typography, Button } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import { IoLogInSharp } from "react-icons/io5";
 import CustomizedInput from '../components/shared/CustomizedInput'
 import { useAuth } from '../context/AuthContext';

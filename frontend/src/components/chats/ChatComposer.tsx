@@ -1,4 +1,4 @@
-import { IconButton } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 import { IoMdSend } from 'react-icons/io';
 import type { RefObject } from 'react';
 

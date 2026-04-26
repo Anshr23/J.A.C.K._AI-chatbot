@@ -1,4 +1,6 @@
-import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { useMediaQuery, useTheme } from "@mui/material";
 import TypingAnim from "../components/shared/TypingAnim";
 import Footer from "../components/shared/Footer";
 

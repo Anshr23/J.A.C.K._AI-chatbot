@@ -1,4 +1,7 @@
-import { Avatar, Box, Button, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import { getConversationLabel, getUserInitials } from '../../helpers/chatUtils';
 import type { ConversationSummary } from '../../types/chat';

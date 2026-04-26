@@ -11,7 +11,8 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           mui: ['@mui/material', '@emotion/react', '@emotion/styled'],
           router: ['react-router-dom'],
-          utils: ['axios', 'react-hot-toast', 'react-type-animation']
+          utils: ['axios', 'react-hot-toast', 'react-type-animation', 'react-icons'],
+          syntax: ['react-syntax-highlighter']
         }
       }
     },
